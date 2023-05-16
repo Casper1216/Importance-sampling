@@ -51,14 +51,14 @@ int main(){
     
     //建立 number of col row nonzero location
 	 
-    int col[n];		//number of col nonzero 
+   	int* col = (int*)malloc(sizeof(int)*n);		//number of col nonzero 
     
     for(int i=0;i<n;i++){
     	fscanf(fp1,"%d ",&col[i]);
     	
 	}
 	
-	int row[m];		//number of row nonzero 
+	int* row = (int*)malloc(sizeof(int)*m);		//number of row nonzero 
     
     for(int i=0;i<m;i++){
     	fscanf(fp1,"%d ",&row[i]);	
@@ -72,7 +72,7 @@ int main(){
 		VN_set[i] = (int *)malloc(sizeof(int) * col[i]);
 	}
 	//CN
-	int** CN_set = (int **)malloc(sizeof(int*) * (n-k));
+	int** CN_set = (int **)malloc(sizeof(int*) * m);
 	for(int i=0;i<m;i++){
 		CN_set[i] = (int *)malloc(sizeof(int) * row[i]);
 	}	
@@ -80,7 +80,49 @@ int main(){
 	
 
 	
-	int i = 0;
+
+	
+	for(int i=0;i<n;i++){
+		for(int j=0;j<col[i];j++){
+			fscanf(fp1,"%d ",&VN_set[i][j]);
+			VN_set[i][j]--;
+		}
+		for(int k=col[i];k<dv;k++){
+			int buffer;
+			fscanf(fp1,"%d ",&buffer);	//把多餘的 col idex 用 buffer 消耗掉 
+		}
+	}
+	
+	
+	for(int i=0;i<m;i++){
+		for(int j=0;j<row[i];j++){
+			fscanf(fp1,"%d ",&CN_set[i][j]);
+			CN_set[i][j]--;
+		}
+		for(int k=row[i];k<dc;k++){
+			int buffer;
+			fscanf(fp1,"%d ",&buffer);	//把多餘的 col idex 用 buffer 消耗掉 
+		}
+	}
+	
+	for(int i=0;i<n;i++){
+		for(int j=0;j<col[i];j++){
+			printf("%d ",VN_set[i][j]);
+			
+		}
+		printf("\n");
+	}
+	for(int i=0;i<m;i++){
+		for(int j=0;j<row[i];j++){
+			printf("%d ",CN_set[i][j]);
+			
+		}
+		printf("\n");
+	}
+
+
+
+	/*
 	int c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11;
 	while(fscanf(fp1,"%d %d %d %d %d %d %d %d %d %d %d",&c1,&c2,&c3,&c4,&c5,&c6,&c7,&c8,&c9,&c10,&c11)){
 		//printf("%d %d %d %d %d %d %d %d %d %d %d\n",c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11);
@@ -219,26 +261,53 @@ int main(){
 			break;
 		i++;
 	}
-
+	*/
 	fclose(fp1);
+	
 	
 	//***************************************************************************
 	// 讀取 cycle 6 的idex 
 	
-	FILE *fp2 = fopen("6 cycle idex.txt", "r");
+	FILE *fp2 = fopen("6 cycle bit.txt", "r");
 	if (fp2 == NULL) {
         fprintf(stderr, "fopen() failed.\n");
         exit(EXIT_FAILURE);
     }
+    
+    
+	int max_L;
+	fscanf(fp2,"%d ",&max_L);
+	
+	
+    int* cycle_deg = (int *)malloc(sizeof(int) * n);
+
+	for(int j=0;j<n;j++){
+		fscanf(fp2,"%d ",&cycle_deg[j]);
+		//printf("deg : %d\n",cycle_deg[j]);
+	}
+
+	
+	
 	int** cycle_idex = (int **)malloc(sizeof(int*) * n);
 	for(int i=0;i<n;i++){
-		cycle_idex[i] = (int*)malloc(sizeof(int) * 3);
+		cycle_idex[i] = (int*)malloc(sizeof(int) * cycle_deg[i]);
+	}
+	printf("*******************************\n");
+	for(int i=0;i<n;i++){
+		//printf("VN %d \n",i);
+		for(int j=0;j<cycle_deg[i];j++){
+			fscanf(fp2,"%d ",&cycle_idex[i][j]);
+			
+			//printf("%d ",cycle_idex[i][j]);
+		}
+		
+			
+		//printf("\n");
+		
 	}
 	
-	int cycle4,cycle6,cycle8;
-	//fscanf(fp2,"%d %d %d",&cycle4,&cycle6,&cycle8);
 	
-	
+	/*
 	i=0;
 	int i1,i2,i3;
 	while(fscanf(fp2,"%d %d %d",&i1,&i2,&i3)){
@@ -250,19 +319,23 @@ int main(){
 			break;
 		i++;
 	}
+	
+	*/
+	
+	
 	fclose(fp2);
 	//***************************************************************************
 	//channel information
 	double* Fn = (double *)malloc(sizeof(double) * n);
 	//tau
-	double** tau= (double **)malloc(sizeof(double*) * (n-k));
-	for(int i=0;i<(n-k);i++){
+	double** tau= (double **)malloc(sizeof(double*) * m);
+	for(int i=0;i<m;i++){
 		tau[i] = (double *)malloc(sizeof(double) * dc);
 	}
 	
 	//CN update //CN[j][i]  CN j to CN i
-	double** CN = (double **)malloc(sizeof(double*) * (n-k));
-	for(int i=0;i<(n-k);i++){
+	double** CN = (double **)malloc(sizeof(double*) * m );
+	for(int i=0;i<m;i++){
 		CN[i] = (double *)malloc(sizeof(double) * dc);
 	}
 	
@@ -287,7 +360,7 @@ int main(){
 	//SNR
 	const int SNR_L = 1;
 	double *SNR_dB = (double *)malloc(sizeof(double) * SNR_L);
-/*
+	/*
 	SNR_dB[0] = 0;
 	SNR_dB[1] = 0.4;
 	
@@ -324,7 +397,7 @@ int main(){
 	
 	int numtime =1000;
 	int iteration = 50;	
-	
+	/*
 	
 	
 	double *FER = (double*)malloc(sizeof(double) * SNR_L);
@@ -388,14 +461,14 @@ int main(){
 			for(iter=0;iter<iteration;iter++){
 				
 				//CN update	
-				for(int j=0;j<(n-k);j++){	
+				for(int j=0;j<m;j++){	
 					for(int i=0;i<row[j];i++){
 						tau[j][i]=1;	
 					}
 				}
 			
 				
-				for(int j=0;j<(n-k);j++){				//go through all CN	
+				for(int j=0;j<m;j++){				//go through all CN	
 					for(int i=0;i<row[j];i++){				//相連之 VN 
 						//if(CN_set[j][i]==-1){
 						//	continue;
@@ -432,14 +505,7 @@ int main(){
 						
 					}
 				}
-				/*
-				for(int j=0;j<(n-k);j++){
-					for(int i=0;i<dc;i++){	
-						printf("%e ",CN[j][i]);	
-					}
-					printf("\n");	
-				}
-				*/
+				
 				
 				//VN update
 	
@@ -507,7 +573,7 @@ int main(){
 				int* s = (int *)malloc(sizeof(int) * (n-k));
 				bool iszerovector = true;
 				
-				for(int j=0;j<(n-k);j++){
+				for(int j=0;j<m;j++){
 					s[j] =0;
 					for(int i=0;i<row[j];i++){
 						if(CN_set[j][i]>=0&&u_hat[CN_set[j][i]]==1)
@@ -555,6 +621,10 @@ int main(){
 	
 	
 	} 
+	
+	
+	
+	*/
 	
 	// Record the end time
     time_t end = clock();
