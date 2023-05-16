@@ -31,36 +31,36 @@ int main(){
 	*/
 	
 	
-	FILE *fp1 = fopen("H_1944_972.txt", "r");
+	FILE *fp1 = fopen("H_648_324.txt", "r");
 	if (fp1 == NULL) {
         fprintf(stderr, "fopen() failed.\n");
         exit(EXIT_FAILURE);
     }
     
-    int n,k,dv,dc;
+    int n,m,dv,dc;
     
     
     fscanf(fp1,"%d ",&n);
-    fscanf(fp1,"%d ",&k);	// H 的 row 數量 
+    fscanf(fp1,"%d ",&m);	// H 的 row 數量 
     fscanf(fp1,"%d ",&dv);
     fscanf(fp1,"%d ",&dc);
     
-    printf("%d %d %d %d\n",n,k,dv,dc);
+    printf("%d %d %d %d\n",n,m,dv,dc);
     
-    const double R=(double)k/n; //coderate
+    const double R=(double)(n-m)/n; //coderate
     
     //建立 number of col row nonzero location
 	 
-    int col[1944];		//number of col nonzero 
+    int col[n];		//number of col nonzero 
     
     for(int i=0;i<n;i++){
     	fscanf(fp1,"%d ",&col[i]);
     	
 	}
 	
-	int row[972];		//number of row nonzero 
+	int row[m];		//number of row nonzero 
     
-    for(int i=0;i<(n-k);i++){
+    for(int i=0;i<m;i++){
     	fscanf(fp1,"%d ",&row[i]);	
 	}	
 	
@@ -73,7 +73,7 @@ int main(){
 	}
 	//CN
 	int** CN_set = (int **)malloc(sizeof(int*) * (n-k));
-	for(int i=0;i<n-k;i++){
+	for(int i=0;i<m;i++){
 		CN_set[i] = (int *)malloc(sizeof(int) * row[i]);
 	}	
 
@@ -215,7 +215,7 @@ int main(){
 		
 		
 		
-		if(i==(n-k)-1)
+		if(i==m-1)
 			break;
 		i++;
 	}
@@ -224,8 +224,33 @@ int main(){
 	
 	//***************************************************************************
 	// 讀取 cycle 6 的idex 
-
-
+	
+	FILE *fp2 = fopen("6 cycle idex.txt", "r");
+	if (fp2 == NULL) {
+        fprintf(stderr, "fopen() failed.\n");
+        exit(EXIT_FAILURE);
+    }
+	int** cycle_idex = (int **)malloc(sizeof(int*) * n);
+	for(int i=0;i<n;i++){
+		cycle_idex[i] = (int*)malloc(sizeof(int) * 3);
+	}
+	
+	int cycle4,cycle6,cycle8;
+	//fscanf(fp2,"%d %d %d",&cycle4,&cycle6,&cycle8);
+	
+	
+	i=0;
+	int i1,i2,i3;
+	while(fscanf(fp2,"%d %d %d",&i1,&i2,&i3)){
+		
+		cycle_idex[i][0] = i1-1;
+		cycle_idex[i][1] = i2-1;
+		cycle_idex[i][2] = i3-1;
+		if(i==cycle6-1)
+			break;
+		i++;
+	}
+	fclose(fp2);
 	//***************************************************************************
 	//channel information
 	double* Fn = (double *)malloc(sizeof(double) * n);
