@@ -3,7 +3,7 @@ addpath('Count-4-cycles');
 addpath('Count-6-cycles');
 addpath('Count-8-cycles');
 %addpath('Count-10-cycles');
-A = textread('H_648_324.txt');
+A = textread('PEG_H.txt');
 cn = A(4,1:A(1,2));
 H = A(5+A(1,1):end,1:max(cn));
 [num_4_cycles,vn_index_4] = count_4_cycles(H,cn);
