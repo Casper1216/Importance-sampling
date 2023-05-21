@@ -24,7 +24,7 @@ int main(){
 	
 	//read txt
 	 
-	ifstream ifs("6 cycle idex.txt");
+	ifstream ifs("6 cycle idex H_96_48.txt");
     if (!ifs.is_open()) {
         cout << "Failed to open file.\n";
         return 1; // EXIT_FAILURE
@@ -52,6 +52,35 @@ int main(){
     }
 
     ifs.close();
+    //*******************************************************************
+    //將每個 cycle 6 idex sorting
+    
+	//write into txt
+	ofstream ofs1;
+	ofs1.open("6 cycle idex sorting.txt");
+    if (!ofs1.is_open()) {
+        cout << "Failed to open file.\n";
+        return 1; // EXIT_FAILURE
+    }
+    
+    ofs1<<cycle4<<" "<<cycle6<<" "<<cycle8<<"\n";
+    //sorting
+    for(int i=0;i<idex.size();i++){
+    	sort(idex[i].begin(),idex[i].end());
+    }
+    sort(idex.begin(),idex.end());
+    //write number of cycle bit of each VN 
+    
+    for(int i=0;i<idex.size();i++){
+    	
+    	ofs1<<idex[i][0]<<" "<<idex[i][1]<<" "<<idex[i][2]<<"\n";
+	}
+	
+	ofs1.close();
+	//******************************************************************
+	
+	
+	//整理出 每個 VN 有相關的 bit 
 	
 	
 	sort(idex.begin(),idex.end());
@@ -87,7 +116,8 @@ int main(){
 	//cout<<"max_L: "<<max_L<<endl;
 	
 	
-	
+	/*
+	//印出 cycle 6 
 	for(int i=0;i<L;i++){
 		if(!res[i].empty()){
 			cout<<"VN: "<<i<<" size: "<<res[i].size()<<endl;
@@ -97,12 +127,12 @@ int main(){
 		}
 		
 	}
-	
+	*/
 	
 	
 	//write into txt
 	ofstream ofs;
-	ofs.open("6 cycle bit.txt");
+	ofs.open("6 cycle bit H_96_48.txt");
     if (!ofs.is_open()) {
         cout << "Failed to open file.\n";
         return 1; // EXIT_FAILURE
@@ -125,8 +155,7 @@ int main(){
 			ofs<<e<<" ";
 		}
 		
-		//for(int j=res[i].size();j<max_L;j++)
-		//	ofs<<-1<<" ";
+		
 		ofs<<"\n";
 		
 	}

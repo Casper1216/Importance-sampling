@@ -121,7 +121,7 @@ int main(){
 	//***************************************************************************
 	// Åª¨ú cycle 6 ªºidex 
 	
-	FILE *fp2 = fopen("6 cycle bit.txt", "r");
+	FILE *fp2 = fopen("6 cycle bit H_96_48.txt", "r");
 	if (fp2 == NULL) {
         fprintf(stderr, "fopen() failed.\n");
         exit(EXIT_FAILURE);
@@ -216,7 +216,7 @@ int main(){
 	SNR_dB[4] = 1.6;
 	SNR_dB[5] = 2;
 	*/
-	SNR_dB[0] = 5.5;
+	SNR_dB[0] = 9.5;
 	
 	
 	//**********************************************
@@ -237,7 +237,7 @@ int main(){
 	
 	//*******************************************************************
 	
-	int numtime =1000;
+	int numtime =3000;
 	int iteration = 50;	
 	
 	double bias = -1;	// use bias let bit shift to error region 
@@ -255,9 +255,6 @@ int main(){
 	
 	for(int q=0;q<SNR_L;q++){
 			
-			
-		
-		
 		double sigma = sqrt((1/(2*R))*pow(10,-(SNR_dB[q]/10)));	//sigma 
 		
 		
@@ -464,29 +461,35 @@ int main(){
 				
 				
 				
-				double W = 0;
-				double power = 0;
-				int cyc_i=0;
-				for(int i=0;i<n;i++){
-					
-					if(cyc_i<cycle_deg[vn]&&cycle_idex[vn][cyc_i]==i){
-						
-						power += bias * ( bias/2 - y[i] + 1);
-						//printf("cyc_i: %d power: %f \n",cyc_i,power);
-						cyc_i++;
-					}
-				}
-				
-				
-					
-				W = exp((1/(sigma))*power);
-				//printf("W : %E \n",W);
 				
 				
 				
-				// frameerror add weight function 
+				
+				
 				for(int i=0;i<n;i++){
 					if(u[i]!=u_hat[i]){
+						
+						// weight function W
+						double W = 0;
+						double power = 0;
+						int cyc_i=0;
+						for(int i=0;i<n;i++){
+							
+							if(cyc_i<cycle_deg[vn]&&cycle_idex[vn][cyc_i]==i){
+								
+								power += bias * ( bias/2 - y[i] + 1);
+								//printf("i: %d power: %f \n",i,power);
+								cyc_i++;
+							}
+						}
+						
+						
+							
+						W = exp((1/(sigma))*power);
+						//W = exp((1/(sigma*sigma))*power);	//correct
+						//printf("W : %E \n",W);
+						
+						// frameerror add W
 						frameerror+= W;
 						break;
 					}
@@ -504,7 +507,7 @@ int main(){
 		}
 		
 		
-		//FER[q] /= n;	//divde n VNs
+		
 		printf("final FER: %E\n",FER[q]);
 	}
 	
