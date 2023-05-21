@@ -198,20 +198,20 @@ int main(){
 	
 	
 	//SNR
-	const int SNR_L = 1;
+	const int SNR_L = 4;
 	double *SNR_dB = (double *)malloc(sizeof(double) * SNR_L);
+	
+	SNR_dB[0] = 3;
+	SNR_dB[1] = 3.5;
+	
+	SNR_dB[2] = 4;
+	
+	SNR_dB[3] = 4.5;
 	/*
-	SNR_dB[0] = 0;
-	SNR_dB[1] = 0.4;
-	
-	SNR_dB[2] = 0.8;
-	
-	SNR_dB[3] = 1.2;
-	
 	SNR_dB[4] = 1.6;
 	SNR_dB[5] = 2;
 	*/
-	SNR_dB[0] = 4;
+	//SNR_dB[0] = 5.5;
 	
 	
 	//**********************************************
@@ -232,7 +232,7 @@ int main(){
 	
 	//*******************************************************************
 	
-	int numtime =10;
+	int numtime =100;
 	int iteration = 50;	
 	
 	double bias = -1;	// use bias let bit shift to error region 
@@ -252,23 +252,20 @@ int main(){
 			
 		double sigma = sqrt((1/(2*R))*pow(10,-(SNR_dB[q]/10)));	//sigma 
 		
+		printf("SNR: %f\n",SNR_dB[q]);
+		//printf("sigma: %f\n",sigma);
 		
-		printf("sigma: %f\n",sigma);
 		
-		
-			
-			double frameerror=0;
+		double total_FER=0;
 			
 			
-			for(int num=0;num<numtime;num++){
+			for(int cy=0;cy<cycle6;cy++){
 				
+				printf("cycle: %d\n",cy);
+				double frameerror=0;
 				
-				
-				printf("num: %d\n",num);
-				
-				for(int cy=0;cy<cycle6;cy++){
-					
-				
+				for(int num=0;num<numtime;num++){
+
 					//noise
 					double* noise = (double *)malloc(sizeof(double) * n);
 					double U ,V ;
@@ -292,7 +289,7 @@ int main(){
 						//add bias to cycle bit
 						
 						if(cycle_i<3 &&cycle_idex[cy][cycle_i]==i){
-							
+							//printf("%d ",i);
 							y[i] = x[i] + sigma*noise[i] + bias;
 							cycle_i++;
 						}
@@ -302,7 +299,7 @@ int main(){
 						
 						
 					} 
-					
+					//printf("\n");
 					//initialization
 					for(int i=0;i<n;i++){
 						Fn[i] = 2*y[i]/(pow(sigma,2));	
@@ -454,7 +451,52 @@ int main(){
 					}
 					
 					
+					// weight function W
+					double W = 0;
+					double power = 0;
+					int cyc_i=0;
+					double front=0,back=0;
 					
+					for(int i=0;i<n;i++){
+								
+						if(cyc_i<3 &&cycle_idex[cy][cyc_i]==i){
+									
+							power += bias * ( bias/2 - y[i] + 1);
+							//printf("i: %d power: %f \n",i,power);
+							cyc_i++;
+						}
+						
+					}
+					
+					//***********************
+					/*
+					for(int i=0;i<n;i++){
+								
+						if(cyc_i<3 &&cycle_idex[cy][cyc_i]==i){
+									
+							front += pow(y[i]-(1+bias),2);
+							
+							cyc_i++;
+						}
+						else{
+							front += pow(y[i]-1,2);
+						}
+						back +=pow(y[i]-1,2);
+						
+					}
+					power = (front-back);
+					printf("f : %f\n",front);
+					printf("b : %f\n",back);
+					//W = exp((1/(2*sigma*sigma))*power);	//correct
+					//printf("W : %f \n",W);
+					*/
+					//***********************
+							
+					W = exp((1/(sigma*sigma))*power);	//correct
+					//printf("W : %f \n",W);
+							
+					// frameerror add W
+							
 					
 					
 					
@@ -463,46 +505,32 @@ int main(){
 					for(int i=0;i<n;i++){
 						if(u[i]!=u_hat[i]){
 							
-							// weight function W
-							double W = 0;
-							double power = 0;
-							int cyc_i=0;
-							for(int i=0;i<n;i++){
-								
-								if(cycle_i<3 &&cycle_idex[cy][cycle_i]==i){
-									
-									power += bias * ( bias/2 - y[i] + 1);
-									//printf("i: %d power: %f \n",i,power);
-									cyc_i++;
-								}
-							}
-							
-							
-								
-							W = exp((1/(sigma))*power);
-							//W = exp((1/(sigma*sigma))*power);	//correct
-							//printf("W : %E \n",W);
-							
-							// frameerror add W
-							frameerror+= W;
+							frameerror += W;
 							break;
 						}
 							
 					}
+					
+					
 				
 				}
+				
+				FER_cy[cy] = ((double)frameerror)/((double)numtime);
+				total_FER += ((double)frameerror)/((double)numtime);
 			} 
 			
 			
-			FER[q] = ((double)frameerror)/((double)numtime * cycle6);	//FER 為全部 VN 的 IS estimation 相加起來 ? 
+			FER[q] += (double)(total_FER)/(cycle6);	//FER 為全部 VN 的 IS estimation 相加起來 ? 
 			
 
 		
 		printf("final FER: %E\n",FER[q]);
 	}
-
-	
-	
+	/*
+	for(int i=0;i<cycle6;i++){
+		printf("cycle: %d FER: %E\n",i,FER_cy[i]);
+	}
+	*/
 	
 	
 	
@@ -513,7 +541,7 @@ int main(){
     printf(" %f  sec", diff / CLOCKS_PER_SEC );
     
 	
-	/*
+	
 	//寫入檔案 CSV
 	FILE *fp = fopen("LDPC_IS.csv", "w");
     
@@ -538,7 +566,7 @@ int main(){
 	}
 	
 	fclose(fp);
-	*/
+	
 	
 	return 0;
 }
