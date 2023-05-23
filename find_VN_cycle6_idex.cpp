@@ -29,9 +29,9 @@ int main(){
         cout << "Failed to open file.\n";
         return 1; // EXIT_FAILURE
     }
-	int cycle4,cycle6,cycle8;
+	int cycle6,c;
 	
-	ifs >>cycle4>>cycle6>>cycle8;
+	ifs>>cycle6>>c;
 	//cout<<"number of cycle"<<endl;
 	//cout<<cycle4<<' '<<cycle6<<' '<<cycle8<<endl;
 	
@@ -63,7 +63,7 @@ int main(){
         return 1; // EXIT_FAILURE
     }
     
-    ofs1<<cycle4<<" "<<cycle6<<" "<<cycle8<<"\n";
+    ofs1<<cycle6<<" "<<c<<"\n";
     //sorting
     for(int i=0;i<idex.size();i++){
     	sort(idex[i].begin(),idex[i].end());
