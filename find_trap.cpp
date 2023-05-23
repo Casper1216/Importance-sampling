@@ -84,7 +84,7 @@ int main(){
 	int L; 
 	cin>>L;
 	//--------------read cycle idex----------------------
-    FILE *fp1 = fopen("6 cycle idex H_96_48.txt", "r");
+    FILE *fp1 = fopen("8 cycle idex H_96_48.txt", "r");
 	if (fp1 == NULL) {
         fprintf(stderr, "fopen() failed.\n");
         exit(EXIT_FAILURE);
@@ -110,7 +110,7 @@ int main(){
 
     
     //---------------sort cycle 2c idex-----------------
-    //sort cycle 6 idex
+    //sort cycle idex
     
     for(int i=0;i<idex.size();i++){
     	sort(idex[i].begin(),idex[i].end());
@@ -128,9 +128,9 @@ int main(){
    
     //---------------find k common VN-----------------------
     
-    int k=2;    //
-
-    
+    int k;    //
+    cout<<"Enter common VNs: "<<endl;
+    cin>>k;
     //all_set[i] save idex[i] all subset which have k elements 
     vector<vector<vector<int>>> all_set;
     
@@ -152,8 +152,9 @@ int main(){
     
     set<set<int>> trapset = find_trap(all_set); //return common cycle idex
     
-    /*
+    
     cout<<"number of common VN: "<<trapset.size()<<endl;
+    /*
     for(auto s:trapset){
         for(auto e:s)
            cout<<e<<' ';
@@ -183,7 +184,7 @@ int main(){
     //-------------------write into txt-------------
 	
 	ofstream ofs1;
-	ofs1.open("6 cycle common 2 VN.txt");
+	ofs1.open("8 cycle common 3 VN.txt");
     if (!ofs1.is_open()) {
         cout << "Failed to open file.\n";
         return 1; // EXIT_FAILURE
