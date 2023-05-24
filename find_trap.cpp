@@ -68,9 +68,10 @@ set<set<int>> find_trap(vector<vector<vector<int>>>& all){
 
 
 int main(){
-	
+	//--------------Start Record the time----------------
+    time_t  start = clock();
 
-	
+	//--------------get code length----------------------
 	cout<<"Code length: "<<endl;
 	int L; 
 	cin>>L;
@@ -180,6 +181,12 @@ int main(){
         cout<<endl;
     }
     */
+
+   //----------------Record the end time------------------------
+    time_t end = clock();
+	double diff = end - start; // ms
+    cout<<"total: "<<(diff / CLOCKS_PER_SEC)<< "second";
+
    //-------------write into txt no repeat----------------------
    //
 	ofstream ofs1;
@@ -212,7 +219,7 @@ int main(){
    }
     
     cout<<"number of harmful trapping set: "<<harm.size()<<endl;
-    //-------------------write into txt-------------
+    //-------------------write VN within many cycles---------------
 	
 	ofstream ofs2;
 	ofs2.open("6 cycle common 2 VN within many cycles.txt");
@@ -223,7 +230,7 @@ int main(){
     
     ofs2<<harm.size()<<"\n";
     
-    //write number of cycle bit of each VN 
+    //----------write the number of harmful cycle of VN-----------------
     for(auto s:harm){
         for(auto e:s)
            ofs2<<e<<" ";
