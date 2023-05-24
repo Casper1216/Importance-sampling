@@ -14,56 +14,44 @@ using namespace std;
 int main(){
 	//將有cycle idex 的 txt 檔
 	//轉換成 每一個 VN 有產生 cycle 的 cycle idex 
-	
-	
-	
+
 	cout<<"Code length: "<<endl;
 	int L; 
-	
 	cin>>L;
-	
-	//read txt
-	 
-	ifstream ifs("6 cycle idex H_96_48.txt");
-    if (!ifs.is_open()) {
-        cout << "Failed to open file.\n";
-        return 1; // EXIT_FAILURE
+	//--------------read cycle idex----------------------
+    FILE *fp1 = fopen("8 cycle idex H_96_48.txt", "r");
+	if (fp1 == NULL) {
+        fprintf(stderr, "fopen() failed.\n");
+        exit(EXIT_FAILURE);
     }
-	int cycle6,c;
-	
-	ifs>>cycle6>>c;
-	//cout<<"number of cycle"<<endl;
-	//cout<<cycle4<<' '<<cycle6<<' '<<cycle8<<endl;
-	
-    int i1,i2,i3;
     
-    
-    //calculate cycle6 
-    
-    vector<vector<int>> idex(cycle6,vector<int>(3,0));
-    int i=0;
-    while (ifs >>i1>>i2>>i3) {
-        
-        idex[i][0] = i1-1;
-        idex[i][1] = i2-1;
-        idex[i][2] = i3-1;
-        i++; 	
-        
-    }
+    int cyc,c;      //have cyc  2*c  cycles
+                    // c VNs
+                
+    fscanf(fp1,"%d ",&cyc);
+    fscanf(fp1,"%d ",&c);	// H 的 row 數量 
 
-    ifs.close();
+    vector<vector<int>> idex(cyc,vector<int>(c,0));
+    
+    for(int i=0;i<cyc;i++){
+        for(int j=0;j<c;j++){
+            fscanf(fp1,"%d ",&idex[i][j]);
+            idex[i][j]--;
+        }
+	}
+    fclose(fp1);
     //*******************************************************************
     //將每個 cycle 6 idex sorting
     
 	//write into txt
 	ofstream ofs1;
-	ofs1.open("6 cycle idex sorting.txt");
+	ofs1.open("8 cycle idex sorting.txt");
     if (!ofs1.is_open()) {
         cout << "Failed to open file.\n";
         return 1; // EXIT_FAILURE
     }
     
-    ofs1<<cycle6<<" "<<c<<"\n";
+    ofs1<<cyc<<" "<<c<<"\n";
     //sorting
     for(int i=0;i<idex.size();i++){
     	sort(idex[i].begin(),idex[i].end());
@@ -71,9 +59,11 @@ int main(){
     sort(idex.begin(),idex.end());
     //write number of cycle bit of each VN 
     
-    for(int i=0;i<idex.size();i++){
-    	
-    	ofs1<<idex[i][0]<<" "<<idex[i][1]<<" "<<idex[i][2]<<"\n";
+    for(int i=0;i<cyc;i++){
+    	for(int j=0;j<c;j++){
+			ofs1<<idex[i][j]<<" ";
+		}
+    	ofs1<<"\n";
 	}
 	
 	ofs1.close();
@@ -96,7 +86,7 @@ int main(){
 	*/
 	
 	vector<set<int>> res(L);
-	//write cycle 6 idex of each VN 
+	//write cycle 2*c idex of each VN 
 	for(int i=0;i<idex.size();i++){
 		
 		for(int j=0;j<idex[i].size();j++){
@@ -132,7 +122,7 @@ int main(){
 	
 	//write into txt
 	ofstream ofs;
-	ofs.open("6 cycle bit H_96_48.txt");
+	ofs.open("8 cycle bit H_96_48.txt");
     if (!ofs.is_open()) {
         cout << "Failed to open file.\n";
         return 1; // EXIT_FAILURE

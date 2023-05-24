@@ -67,24 +67,15 @@ set<set<int>> find_trap(vector<vector<vector<int>>>& all){
 
 
 
-
-
-
-
-
-
-
-
 int main(){
 	
-	
-	
+
 	
 	cout<<"Code length: "<<endl;
 	int L; 
 	cin>>L;
 	//--------------read cycle idex----------------------
-    FILE *fp1 = fopen("8 cycle idex H_96_48.txt", "r");
+    FILE *fp1 = fopen("6 cycle idex H_96_48.txt", "r");
 	if (fp1 == NULL) {
         fprintf(stderr, "fopen() failed.\n");
         exit(EXIT_FAILURE);
@@ -153,7 +144,7 @@ int main(){
     set<set<int>> trapset = find_trap(all_set); //return common cycle idex
     
     
-    cout<<"number of common VN: "<<trapset.size()<<endl;
+    cout<<"number of common cycle idex: "<<trapset.size()<<endl;
     /*
     for(auto s:trapset){
         for(auto e:s)
@@ -161,16 +152,27 @@ int main(){
         cout<<endl;
     }
     */
-   set<set<int>> cycle_bit; //save VN of common cycle
+   
+   vector<set<int>> cycle_bit; //save all VN of common cycle
+   set<set<int>> cycle_bit_no_repeat; //save VN of common cycle
    for(auto s:trapset){
         set<int> temp;
+        set<int> temp2;
         for(auto e:s){
             
-            for(int i=0;i<idex[e].size();i++)
+            for(int i=0;i<idex[e].size();i++){
                 temp.insert(idex[e][i]);
+                temp2.insert(idex[e][i]);
+            }
+                
         }
-        cycle_bit.insert(temp);
+        cycle_bit.push_back(temp);
+        cycle_bit_no_repeat.insert(temp2);
     }
+    sort(cycle_bit.begin(),cycle_bit.end());
+    cout<<"number of common VN: "<<cycle_bit_no_repeat.size()<<endl;
+    
+    
     /*
     for(auto s:cycle_bit){
         for(auto e:s)
@@ -178,22 +180,19 @@ int main(){
         cout<<endl;
     }
     */
-
-
-
-    //-------------------write into txt-------------
-	
+   //-------------write into txt no repeat----------------------
+   //
 	ofstream ofs1;
-	ofs1.open("8 cycle common 3 VN.txt");
+	ofs1.open("6 cycle common 2 VN.txt");
     if (!ofs1.is_open()) {
         cout << "Failed to open file.\n";
         return 1; // EXIT_FAILURE
     }
     
-    ofs1<<cyc<<"\n";
+    ofs1<<cycle_bit_no_repeat.size()<<"\n";
     
     //write number of cycle bit of each VN 
-    for(auto s:cycle_bit){
+    for(auto s:cycle_bit_no_repeat){
         for(auto e:s)
            ofs1<<e<<" ";
         ofs1<<"\n";
@@ -201,7 +200,38 @@ int main(){
     
 	
 	ofs1.close();
+
+
+   //-------------------find repeat cycle idex VN-----------------
+   set<set<int>> harm;
+   for(int i=1;i<cycle_bit.size();i++){
+
+        if(cycle_bit[i-1]==cycle_bit[i])
+            harm.insert(cycle_bit[i]);
+
+   }
+    
+    cout<<"number of harmful trapping set: "<<harm.size()<<endl;
+    //-------------------write into txt-------------
 	
+	ofstream ofs2;
+	ofs2.open("6 cycle common 2 VN within many cycles.txt");
+    if (!ofs2.is_open()) {
+        cout << "Failed to open file.\n";
+        return 1; // EXIT_FAILURE
+    }
+    
+    ofs2<<harm.size()<<"\n";
+    
+    //write number of cycle bit of each VN 
+    for(auto s:harm){
+        for(auto e:s)
+           ofs2<<e<<" ";
+        ofs2<<"\n";
+    }
+    
+	
+	ofs2.close();
 
 	return 0;
 }
