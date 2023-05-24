@@ -520,7 +520,7 @@ int main(){
 			} 
 			
 			
-			FER[q] += (double)(total_FER)/(cycle6);	//FER 為全部 VN 的 IS estimation 相加起來 ? 
+			FER[q] += (double)(total_FER)/(cycle6);	//take average
 			
 
 		
